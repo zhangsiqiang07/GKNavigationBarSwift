@@ -11,10 +11,10 @@ import UIKit
 open class GKBaseAnimatedTransition: NSObject {
     open var isScale = false
     open var shadowView: UIView!
-    open var transitionContext: UIViewControllerContextTransitioning!
-    open var containerView: UIView!
-    open var fromViewController: UIViewController!
-    open var toViewController: UIViewController!
+    open weak var transitionContext: UIViewControllerContextTransitioning!
+    open weak var containerView: UIView!
+    open weak var fromViewController: UIViewController!
+    open weak var toViewController: UIViewController!
     open var isHideTabBar = false
     
     open class func transition(with scale: Bool) -> GKBaseAnimatedTransition {
