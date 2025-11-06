@@ -275,4 +275,13 @@ extension UINavigationController {
     open override var childForStatusBarStyle: UIViewController? {
         return topViewController
     }
+
+    // 额外转发，规避系统在过渡期间偶发不走 childForStatusBar* 的情况
+    open override var prefersStatusBarHidden: Bool {
+        return topViewController?.prefersStatusBarHidden ?? GKConfigure.statusBarHidden
+    }
+    
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
+        return topViewController?.preferredStatusBarStyle ?? GKConfigure.statusBarStyle
+    }
 }
