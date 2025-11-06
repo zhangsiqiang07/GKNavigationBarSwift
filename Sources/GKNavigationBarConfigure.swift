@@ -716,19 +716,27 @@ extension UIDevice {
     }
     
     /// 状态栏完整高度，隐藏时为0
+    /// 修正点：优先依据可见 VC 的隐藏状态及 windowScene 的 manager 高度，避免在过渡瞬间回退到 20/44 造成偶发异常
     public static func statusBarFullHeight() -> CGFloat {
-        if !UIApplication.shared.isStatusBarHidden {
-            return statusBarFrame().height
+        // 1) 先看当前可见 VC 是否主动隐藏了状态栏
+        if let vc = GKConfigure.visibleViewController(), vc.gk_statusBarHidden {
+            return 0
         }
+
+        // 2) iOS 13+ 使用 statusBarManager 的高度；若为 0，视为隐藏或暂不可用，直接返回 0，避免错误兜底
+        let frame = statusBarFrame()
+        if frame.height > 0 {
+            return frame.height
+        }
+
+        // 3) 兜底：无法从系统拿到时，根据机型规则给出合理默认（仅在未隐藏场景下使用）
         if isIPad {
             return isNotchedScreen ? 24 : 20
         }
         if !isNotchedScreen {
             return 20
         }
-        if isLandScape() {
-            return 0
-        }
+        // 如应用禁用横屏，则这里始终按竖屏计算
         return statusBarHeightForPortrait()
     }
     
